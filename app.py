@@ -13,7 +13,7 @@ def main():
                        initial_sidebar_state='collapsed')
 
     # Apply custom CSS for aesthetic changes
-   st.markdown(
+    st.markdown(
         """
         <style>
             .stApp {
@@ -70,8 +70,8 @@ def main():
         </style>
         """,
         unsafe_allow_html=True
-   
     )
+  
 
     st.title('Pasting Made Easy 🚀🚀')
 
