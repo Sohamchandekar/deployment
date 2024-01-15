@@ -75,19 +75,25 @@ def main():
 
     st.title('Pasting Made Easy 🚀🚀')
 
-    # Dialogue box
-    st.markdown(
-        """
-        <div class="dialogue-box">
-            Upload the formatted PDF you wish to see your letterhead on!!<br/>
-            Upload your desired image! and you're good to go
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    col1, col2 = st.columns([1, 2])
 
-    pdf_file = st.file_uploader("Upload PDF File", type=["pdf"])
-    image_file = st.file_uploader("Upload Image File", type=["jpg", "png"])
+    with col1:
+        # Dialogue box
+        st.markdown(
+            """
+            <div class="dialogue-box">
+                Upload the formatted PDF you wish to see your letterhead on!!<br/>
+                Upload your desired image! and you're good to go
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        # File uploaders
+
+        pdf_file = st.file_uploader("Upload PDF File", type=["pdf"], key="pdf-uploader")
+        image_file = st.file_uploader("Upload Image File", type=["jpg", "png"], key="image-uploader")
 
     if st.button("Initiate Job 💼"):
         if pdf_file and image_file:
