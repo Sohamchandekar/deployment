@@ -13,16 +13,19 @@ def main():
                        initial_sidebar_state='collapsed')
 
     # Apply custom CSS for aesthetic changes
-    st.markdown(
+   st.markdown(
         """
         <style>
+            .stApp {
+                background: linear-gradient(to right, #6528F7, #B2A4FF),
+                            radial-gradient(circle, #D7BBF5, #EDE4FF); /* Gradient background */
+            }
             body {
-                background-color: #F2F2F2; /* Light gray background */
-                color: #333333; /* Dark gray text */
+                color: #000000; /* Dark gray text */
                 font-size: 18px;
             }
             .stButton>button {
-                background-color: #007BFF; /* Blue button */
+                background-color: #200E3A; /* Blue button */
                 color: white;
                 padding: 10px 20px;
                 font-size: 16px;
@@ -30,33 +33,44 @@ def main():
                 cursor: pointer;
             }
             .stButton>button:hover {
-                background-color: #0056b3; /* Darker blue on hover */
+                background-color: #0056b3; 
             }
             .footer {
                 position: fixed;
                 bottom: 10px;
                 left: 50%;
                 transform: translateX(-50%);
-                color: #888888; /* Light gray text for footer */
+                color: #030637; 
                 font-size: 14px;
             }
             .dialogue-box {
-
                 padding: 20px;
                 border-radius: 10px;
                 margin-bottom: 20px;
-                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+                box-shadow: 0px 8px 12px rgba(0.4, 0, 0, 0.7);
             }
             .happy-editing {
                 position: absolute;
                 bottom: 10px;
                 right: 10px;
-                color: #888888;
+                color: #030637;
                 font-size: 14px;
+            }
+            .file-upload-label {
+                background-color: #200E3A;
+                color: white;
+                border-radius: 5px;
+                font-size: 16px;
+                padding: 10px 20px;
+                cursor: pointer;
+            }
+            .file-upload-input {
+                display: none;
             }
         </style>
         """,
         unsafe_allow_html=True
+   
     )
 
     st.title('Pasting Made Easy 🚀🚀')
