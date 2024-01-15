@@ -2,5 +2,6 @@ streamlit==1.30.0
 PyPDF2==1.26.0
 reportlab==4.0.9
 pillow==10.2.0
-protobuf==3.19.0
+protobuf>=3.20,<5
 altair==4.1.0
+--upgrade pip
