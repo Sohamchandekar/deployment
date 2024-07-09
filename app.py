@@ -14,7 +14,6 @@ def main():
     st.markdown(
         """
         <style>
-        
             @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
             .stApp {
                 background: linear-gradient(to right, #6528F7, #B2A4FF),
