@@ -110,10 +110,13 @@ def main():
             ("Rutuja Narsingh & Associates", "Pratiksha Tulshyan & Associates")
         )
 
+        # Slider for top margin
+        top_margin = st.slider("Select Top Margin (in pixels)", min_value=0, max_value=100, value=0)
+
     if st.button("Initiate Job 💼"):
         if pdf_file and letterhead_option:
             letterhead_file = "letterhead/RNA.png" if letterhead_option == "Rutuja Narsingh & Associates" else "letterhead/PTA.png"
-            processed_pdf = add_letterhead_to_pdf(pdf_file, letterhead_file)
+            processed_pdf = add_letterhead_to_pdf(pdf_file, letterhead_file, top_margin)
             st.download_button("Download Processed PDF", processed_pdf, file_name="output.pdf", key="download-btn")
 
     # Footer
@@ -123,16 +126,27 @@ def main():
     st.markdown('<div class="happy-editing">Happy Editing! 😊</div>', unsafe_allow_html=True)
 
 
-def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file):
+def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
     main_pdf_reader = PdfReader(main_pdf_file)
     pdf_writer = PdfWriter()
+
+    # Open the image and get its dimensions
+    img = Image.open(letterhead_image_file)
+    img_width, img_height = img.size
+
+    # Calculate the aspect ratio
+    aspect_ratio = img_width / img_height
+
+    # Calculate the width and height based on the aspect ratio
+    width = letter[0]
+    height = width / aspect_ratio
 
     # Create a temporary PDF for the letterhead top part
     packet = io.BytesIO()
     can = canvas.Canvas(packet, pagesize=letter)
 
-    # Draw the image at the top of the page
-    can.drawImage(letterhead_image_file, 0, letter[1] - 100, width=letter[0], height=105)
+    # Draw the image at the top of the page with margin
+    can.drawImage(letterhead_image_file, 0, letter[1] - height - top_margin, width=width, height=height)
 
     can.showPage()
     can.save()
