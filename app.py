@@ -104,21 +104,26 @@ def main():
         # File uploader for main PDF
         pdf_file = st.file_uploader("Upload PDF File", type=["pdf"], key="pdf-uploader")
 
-        # Dropdown for letterhead selection
-        letterhead_option = st.selectbox(
-            "Select Letterhead",
-            ("Rutuja Narsingh & Associates", "Pratiksha Tulshyan & Associates")
-        )
+        # Text input for alphanumeric string
+        udin_text = st.text_input("Enter the Alphanumeric UDIN Number")
 
         # Slider for top margin
         top_margin = st.slider("Select Top Margin (in pixels)", min_value=0, max_value=100, value=0)
 
     if st.button("Initiate Job 💼"):
-        if pdf_file and letterhead_option:
-            letterhead_file = "letterhead/RNA.png" if letterhead_option == "Rutuja Narsingh & Associates" else "letterhead/PTA.png"
+        if pdf_file and udin_text:
+            # Extract the 2nd to 7th characters to determine the letterhead
+            udin_substring = udin_text[2:8]
+            if udin_substring == "188808":
+                letterhead_file = "letterhead/RNA.png"
+            elif udin_substring == "627790":
+                letterhead_file = "letterhead/PTA.png"
+            else:
+                st.error("The UDIN does not match any known letterhead. Please check the number.")
+                return
+
             processed_pdf = add_letterhead_to_pdf(pdf_file, letterhead_file, top_margin)
             st.download_button("Download Processed PDF", processed_pdf, file_name="output.pdf", key="download-btn")
-
     # Footer
     st.markdown('<div class="footer">Created by 😎Soham</div>', unsafe_allow_html=True)
 
