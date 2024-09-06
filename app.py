@@ -130,95 +130,93 @@ def main():
     # Happy Editing message
     st.markdown('<div class="happy-editing">Happy Editing! 😊</div>', unsafe_allow_html=True)
 
-# def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
-#     # Set legal paper size dimensions (in points, 1 inch = 72 points)
-#     legal_width, legal_height = 8.5 * 72, 17 * 72
+def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
+    # Read the main PDF
+    main_pdf_reader = PdfReader(main_pdf_file)
+    pdf_writer = PdfWriter()
 
-#     # Read the main PDF
+    # Set A4 paper size dimensions (in points)
+    a4_width, a4_height = A4  # This gives dimensions in points (1 inch = 72 points)
+
+    # Open the letterhead image and get its dimensions
+    img = Image.open(letterhead_image_file)
+    img_width, img_height = img.size
+
+    # Calculate the aspect ratio of the image
+    aspect_ratio = img_width / img_height
+
+    # Calculate the letterhead's display width and height, keeping the width equal to the A4 page width
+    width = a4_width  # Fit the letterhead to the full width of the A4 page
+    height = width / aspect_ratio
+
+    # Create a temporary PDF for the letterhead
+    packet = io.BytesIO()
+    can = canvas.Canvas(packet, pagesize=A4)
+
+    # Draw the image at the top of the first page, accounting for the top margin
+    can.drawImage(letterhead_image_file, 0, a4_height - height - top_margin, width=width, height=height)
+
+    can.save()
+    packet.seek(0)
+
+    # Read the overlay with the letterhead
+    overlay_reader = PdfReader(packet)
+    overlay_page = overlay_reader.pages[0]
+
+    # Get the first page of the main PDF and merge the letterhead
+    first_page = main_pdf_reader.pages[0]
+    first_page.merge_page(overlay_page)
+    pdf_writer.add_page(first_page)
+
+    # Add the rest of the pages without any letterhead overlay
+    for page_number in range(1, len(main_pdf_reader.pages)):
+        pdf_writer.add_page(main_pdf_reader.pages[page_number])
+
+    # Save the new PDF with the letterhead only on the first page
+    output_pdf = io.BytesIO()
+    pdf_writer.write(output_pdf)
+    output_pdf.seek(0)
+
+    return output_pdf.getvalue()
+
+
+# def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
 #     main_pdf_reader = PdfReader(main_pdf_file)
 #     pdf_writer = PdfWriter()
 
-#     # Open the letterhead image and get its dimensions
+#     # Open the image and get its dimensions
 #     img = Image.open(letterhead_image_file)
 #     img_width, img_height = img.size
 
 #     # Calculate the aspect ratio
 #     aspect_ratio = img_width / img_height
 
-#     # Calculate the width and height of the letterhead for the legal page
-#     width = legal_width  # Set the letterhead width equal to the legal page width
+#     # Calculate the width and height based on the aspect ratio
+#     width = letter[0]
 #     height = width / aspect_ratio
 
 #     # Create a temporary PDF for the letterhead top part
 #     packet = io.BytesIO()
-#     can = canvas.Canvas(packet, pagesize=(legal_width, legal_height))
+#     can = canvas.Canvas(packet, pagesize=letter)
 
-#     # Draw the image at the top of the legal page with margin
-#     can.drawImage(letterhead_image_file, 0, legal_height - height - top_margin, width=width, height=height)
+#     # Draw the image at the top of the page with margin
+#     can.drawImage(letterhead_image_file, 0, letter[1] - height - top_margin, width=width, height=height)
 
 #     can.showPage()
 #     can.save()
 #     packet.seek(0)
-
-#     # Read the overlay with the letterhead
 #     overlay_reader = PdfReader(packet)
 #     overlay_page = overlay_reader.pages[0]
 
-#     # Get the first page of the main PDF and merge the letterhead
-#     first_page = main_pdf_reader.pages[0]
-
-#     # Merge the letterhead overlay only on the first page
-#     first_page.merge_page(overlay_page)
-#     pdf_writer.add_page(first_page)
-
-#     # Add the rest of the pages without the letterhead
-#     for page_number in range(1, len(main_pdf_reader.pages)):
+#     for page_number in range(len(main_pdf_reader.pages)):
 #         page = main_pdf_reader.pages[page_number]
+#         page.merge_page(overlay_page)
 #         pdf_writer.add_page(page)
 
-#     # Save the new PDF with the letterhead only on the first page
 #     output_pdf = io.BytesIO()
 #     pdf_writer.write(output_pdf)
-#     output_pdf.seek(0)
 
 #     return output_pdf.getvalue()
-def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
-    main_pdf_reader = PdfReader(main_pdf_file)
-    pdf_writer = PdfWriter()
-
-    # Open the image and get its dimensions
-    img = Image.open(letterhead_image_file)
-    img_width, img_height = img.size
-
-    # Calculate the aspect ratio
-    aspect_ratio = img_width / img_height
-
-    # Calculate the width and height based on the aspect ratio
-    width = letter[0]
-    height = width / aspect_ratio
-
-    # Create a temporary PDF for the letterhead top part
-    packet = io.BytesIO()
-    can = canvas.Canvas(packet, pagesize=letter)
-
-    # Draw the image at the top of the page with margin
-    can.drawImage(letterhead_image_file, 0, letter[1] - height - top_margin, width=width, height=height)
-
-    can.showPage()
-    can.save()
-    packet.seek(0)
-    overlay_reader = PdfReader(packet)
-    overlay_page = overlay_reader.pages[0]
-
-    for page_number in range(len(main_pdf_reader.pages)):
-        page = main_pdf_reader.pages[page_number]
-        page.merge_page(overlay_page)
-        pdf_writer.add_page(page)
-
-    output_pdf = io.BytesIO()
-    pdf_writer.write(output_pdf)
-
-    return output_pdf.getvalue()
 
 if __name__ == '__main__':
     main()
