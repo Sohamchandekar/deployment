@@ -86,7 +86,6 @@ def main():
     """
     st.markdown(quote, unsafe_allow_html=True)
     st.title('Pasting Made Easy 🚀🚀')
-
     col1, col2 = st.columns([1, 2])
 
     with col1:
@@ -111,6 +110,9 @@ def main():
         # Slider for top margin
         top_margin = st.slider("Select Top Margin (in pixels)", min_value=0, max_value=100, value=0)
 
+        # Dropdown for selecting the format (Old or New)
+        format_type = st.selectbox("Select Form3 Format", ["Old Format", "New Format"])
+
     if st.button("Initiate Job 💼"):
         if pdf_file and udin_text:
             # Extract the 2nd to 7th characters to determine the letterhead
@@ -123,7 +125,12 @@ def main():
                 st.error("The UDIN does not match any known letterhead. Please check the number.")
                 return
 
-            processed_pdf = add_letterhead_to_pdf(pdf_file, letterhead_file, top_margin)
+            # Call the appropriate function based on format selection
+            if format_type == "Old Format":
+                processed_pdf = add_letterhead_to_pdf_old(pdf_file, letterhead_file, top_margin)
+            else:
+                processed_pdf = add_letterhead_to_pdf_new(pdf_file, letterhead_file, top_margin)
+
             st.download_button("Download Processed PDF", processed_pdf, file_name="output.pdf", key="download-btn")
     # Footer
     st.markdown('<div class="footer">Created by 😎Soham</div>', unsafe_allow_html=True)
@@ -131,7 +138,7 @@ def main():
     # Happy Editing message
     st.markdown('<div class="happy-editing">Happy Editing! 😊</div>', unsafe_allow_html=True)
 
-def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
+def add_letterhead_to_pdf_new(main_pdf_file, letterhead_image_file, top_margin):
     # Read the main PDF
     main_pdf_reader = PdfReader(main_pdf_file)
     pdf_writer = PdfWriter()
@@ -181,43 +188,43 @@ def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
     return output_pdf.getvalue()
 
 
-# def add_letterhead_to_pdf(main_pdf_file, letterhead_image_file, top_margin):
-#     main_pdf_reader = PdfReader(main_pdf_file)
-#     pdf_writer = PdfWriter()
+def add_letterhead_to_pdf_old(main_pdf_file, letterhead_image_file, top_margin):
+    main_pdf_reader = PdfReader(main_pdf_file)
+    pdf_writer = PdfWriter()
 
-#     # Open the image and get its dimensions
-#     img = Image.open(letterhead_image_file)
-#     img_width, img_height = img.size
+    # Open the image and get its dimensions
+    img = Image.open(letterhead_image_file)
+    img_width, img_height = img.size
 
-#     # Calculate the aspect ratio
-#     aspect_ratio = img_width / img_height
+    # Calculate the aspect ratio
+    aspect_ratio = img_width / img_height
 
-#     # Calculate the width and height based on the aspect ratio
-#     width = letter[0]
-#     height = width / aspect_ratio
+    # Calculate the width and height based on the aspect ratio
+    width = letter[0]
+    height = width / aspect_ratio
 
-#     # Create a temporary PDF for the letterhead top part
-#     packet = io.BytesIO()
-#     can = canvas.Canvas(packet, pagesize=letter)
+    # Create a temporary PDF for the letterhead top part
+    packet = io.BytesIO()
+    can = canvas.Canvas(packet, pagesize=letter)
 
-#     # Draw the image at the top of the page with margin
-#     can.drawImage(letterhead_image_file, 0, letter[1] - height - top_margin, width=width, height=height)
+    # Draw the image at the top of the page with margin
+    can.drawImage(letterhead_image_file, 0, letter[1] - height - top_margin, width=width, height=height)
 
-#     can.showPage()
-#     can.save()
-#     packet.seek(0)
-#     overlay_reader = PdfReader(packet)
-#     overlay_page = overlay_reader.pages[0]
+    can.showPage()
+    can.save()
+    packet.seek(0)
+    overlay_reader = PdfReader(packet)
+    overlay_page = overlay_reader.pages[0]
 
-#     for page_number in range(len(main_pdf_reader.pages)):
-#         page = main_pdf_reader.pages[page_number]
-#         page.merge_page(overlay_page)
-#         pdf_writer.add_page(page)
+    for page_number in range(len(main_pdf_reader.pages)):
+        page = main_pdf_reader.pages[page_number]
+        page.merge_page(overlay_page)
+        pdf_writer.add_page(page)
 
-#     output_pdf = io.BytesIO()
-#     pdf_writer.write(output_pdf)
+    output_pdf = io.BytesIO()
+    pdf_writer.write(output_pdf)
 
-#     return output_pdf.getvalue()
+    return output_pdf.getvalue()
 
 if __name__ == '__main__':
     main()
