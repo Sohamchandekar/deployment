@@ -121,6 +121,8 @@ def main():
                 letterhead_file = "letterhead/RNA.png"
             elif udin_substring == "627790":
                 letterhead_file = "letterhead/PTA.png"
+            elif udin_substring == "631662":
+                letterhead_file = "letterhead/NSA.png"
             else:
                 st.error("The UDIN does not match any known letterhead. Please check the number.")
                 return
